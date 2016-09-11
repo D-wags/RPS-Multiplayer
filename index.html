@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>CoderBay</title>
+
+	<!-- Bootstrap CDN-->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+	<link href="datastyles.css"><style> form {margin: 10px;
+												padding: 10px;
+											}
+								</style>
+</head>
+<body>
+	<div class="fluid-container">
+	  	<div class="jumbotron text-center"><h1>Train Departure Schedule</h1>
+	  	<h2>All Aboard!!</h2>
+	  	</div>
+
+		<div class="panel panel-primary">
+			<div class="panel-heading"><h3 class="panel-title">Current Train Schedule</h3></div>
+			<div class="panel-body">
+
+
+					<table class="table table-hover" id='trainTable'>
+						<thead>
+							<tr>
+								<th>Train Name</th>
+								<th>Destination</th>
+								<th>Frequency (min)</th>
+								<th>Next Arrival</th>
+								<th>Minutes Away</th>
+							</tr>
+						</thead>
+						<tbody>
+
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+
+		<!-- 		<div class="row">
+				<div class="col-md-1">
+			    		<div class="row">
+			    		</div>
+			    	</div>
+
+			    	<div class="col-md-2">
+			    		<div class="row">
+			    			<div class="col-md-12" id="trainName"><h4>Train Name</h4></div>
+			    		</div>
+			    	</div>
+			    	<div class="col-md-2">
+			    		<div class="row">
+			    			<div class="col-md-12" id="destination"><h4>Destination</h4></div>
+			    		</div>
+			    	</div>
+			    	<div class="col-md-2">
+			    		<div class="row">
+			    			<div class="col-md-12" id="frequency"><h4>Frequency(min)</h4></div>
+			    		</div>
+			    	</div>
+			    	<div class="col-md-2">
+			    		<div class="row">
+			    			<div class="col-md-12" id="next"><h4>Next Arrival</h4></div>
+			    		</div>
+			    	</div>
+			    	<div class="col-md-2">
+			    		<div class="row">
+			    			<div class="col-md-12" id="away"><h4>Minutes Away</h4></div>
+			    		</div>
+			    	</div>
+			    	<div class="col-md-1">
+			    		<div class="row">
+			    		</div>
+			    	</div>
+				</div>
+			</div>
+		</div> -->
+
+
+		<div class="panel panel-primary">
+			<div class="panel-heading"><h3 class="panel-title">Add Train</h3></div>
+			<div class="panel-body">
+				<form class="form-horizontal" role="form">
+		    		
+		    			<div class="form-group">
+		    			<label class="control-label">Train Name</label><br/><input class="form-control trainName" type="text"></input>
+		    			</div>
+		    		
+
+		    		
+		    			<div class="form-group">
+		    				<label class="control-label">Destination</label>
+		    				<input class="form-control destination" type="text"></input>
+		    			</div>
+		    		
+
+		    		
+		    			<div class="form-group">
+		    				<label class="control-label time">First Train Time (HH:mm - military time)</label><input class="form-control trainTime" type="text"></input>
+		    			</div>
+
+		    			<div class="form-group">
+		    				<label class="control-label frequency">Frequency(min)</label><input class="form-control" type="text"></input>
+		    			</div>
+		    		
+
+		    		
+		    			<div class="form-group">
+		    				<button class="btn-primary" type="button">Submit</button>
+		    			</div>
+		    		
+		    	</form>
+		   	</div>
+	   	</div>
+	</div>
+
+	<script src="https://code.jquery.com/jquery-2.2.1.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+	<!-- Firebase Reference -->
+	<script src="https://www.gstatic.com/firebasejs/3.3.0/firebase.js"></script>
+	<!-- MomentJS reference -->
+	<script src="https://cdn.jsdelivr.net/momentjs/2.12.0/moment.min.js"></script>
+	<script type="text/javascript">
+
+
+	// Initialize Firebase
+	var config = {
+	apiKey: "AIzaSyBf2rzs29BfTHJJko8vHj74ykYZtWTUV9o",
+    authDomain: "drew-c1204.firebaseapp.com",
+    databaseURL: "https://drew-c1204.firebaseio.com",
+    storageBucket: "drew-c1204.appspot.com"
+	};
+
+	firebase.initializeApp(config);
+
+// Create a variable to reference the database
+var database = firebase.database();
+
+
+// --------------------------------------------------------------
+
+//
+
+database.ref().on("value", function(snapshot) {
+console.log(snapshot.val());
+	
+
+
+$(".btn-primary").on('click', function() {
+
+	var trainName = $(".trainName").val().trim();
+	var destination = $(".destination").val().trim();
+	var trainTime = $(".time").val().trim();
+	var frequency = $(".frequency").val().trim();
+
+	var now = moment().format("dddd");
+	console.log(now);
+	// var future = now.diff(now, "minutes");
+	// console.log(future);
+
+ 	
+
+ 	// $("#trainName").append(trainName + "<br/>");
+ 	// $("#destination").append(destination + "<br/>");
+ 	// $("#frequency").append(frequency + "<br/>");
+
+   $("#trainTable > tbody").append("<tr><td>" + trainName + "</td><td>" + destination + "</td><td>" + "????" + "</td><td>" + "PLACEHOLDER" + "</td></tr>" + "WHAT!" + "</td></tr>");
+
+	var newTrain = {
+ 			name: trainName,
+			dest: destination,
+			time: trainTime,
+			freq: frequency
+ 		}
+
+	database.ref().push(newTrain);
+});
+});
+	</script>
+
+</body>
+</html>
